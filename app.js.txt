@@ -1,0 +1,125 @@
+// GANTI INI DENGAN TOKEN KAMU!
+const HF_TOKEN = 'hf_YOUR_TOKEN_HERE';  // ← GANTI!
+
+const API_URL = 'https://api-inference.huggingface.co/models';
+let lastResponse = '';
+
+function startNewChat() {
+    document.getElementById('messages').innerHTML = '';
+    document.getElementById('welcomeScreen').style.display = 'flex';
+}
+
+function handleKeyDown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+}
+
+async function sendMessage() {
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    document.getElementById('welcomeScreen').style.display = 'none';
+    addMessage('user', text);
+    input.value = '';
+
+    const loadingId = addLoading();
+
+    try {
+        const response = await fetch(`${API_URL}/microsoft/DialoGPT-medium`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${HF_TOKEN}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ inputs: text })
+        });
+
+        removeLoading(loadingId);
+
+        if (response.ok) {
+            const data = await response.json();
+            const botResponse = data[0]?.generated_text || 'Maaf, saya tidak mengerti.';
+            lastResponse = botResponse;
+            addMessage('assistant', botResponse);
+        } else {
+            lastResponse = 'Server sibuk, coba lagi nanti.';
+            addMessage('assistant', lastResponse);
+        }
+    } catch (error) {
+        removeLoading(loadingId);
+        addMessage('assistant', 'Error: ' + error.message);
+    }
+}
+
+function addMessage(role, text) {
+    const container = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = `message ${role}`;
+    div.innerHTML = `
+        <div class="message-avatar">${role === 'user' ? 'U' : 'D'}</div>
+        <div class="message-content">${text}</div>
+    `;
+    container.appendChild(div);
+    document.getElementById('chatContainer').scrollTop = container.scrollHeight;
+}
+
+function addLoading() {
+    const id = 'loading-' + Date.now();
+    const container = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.id = id;
+    div.className = 'message assistant';
+    div.innerHTML = `
+        <div class="message-avatar">D</div>
+        <div class="message-content">⏳ DMXS AI sedang berpikir...</div>
+    `;
+    container.appendChild(div);
+    return id;
+}
+
+function removeLoading(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+}
+
+function speakLast() {
+    if (!lastResponse) {
+        alert('Belum ada pesan untuk dibaca!');
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(lastResponse);
+    utterance.lang = 'id-ID';
+    speechSynthesis.speak(utterance);
+}
+
+function generateImage() {
+    document.getElementById('imageModal').classList.add('active');
+}
+
+function closeImageModal() {
+    document.getElementById('imageModal').classList.remove('active');
+    document.getElementById('imageResult').innerHTML = '';
+}
+
+async function generateImageFree() {
+    const prompt = document.getElementById('imagePrompt').value;
+    if (!prompt) return;
+
+    const resultDiv = document.getElementById('imageResult');
+    resultDiv.innerHTML = '⏳ Generating...';
+
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&nologo=true`;
+
+    resultDiv.innerHTML = `
+        <img src="${imageUrl}" alt="Generated" onload="this.style.opacity=1" style="opacity: 0; transition: opacity 0.5s;">
+        <br>
+        <a href="${imageUrl}" download="dmxs-generated.png" style="color: #6366f1;">⬇️ Download</a>
+    `;
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('light-theme');
+}

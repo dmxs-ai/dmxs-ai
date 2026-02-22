@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMXS AI - Gratis</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">D</div>
+                <span class="logo-text">DMXS AI</span>
+            </div>
+            <button class="new-chat-btn" onclick="startNewChat()">+ Chat Baru</button>
+            <div class="chat-history" id="chatHistory"></div>
+            <div class="sidebar-footer">
+                <span style="color: #666; font-size: 12px;">🆓 100% Gratis</span>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="chat-header">
+                <h2>DMXS AI Assistant</h2>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+                </div>
+            </header>
+
+            <div class="chat-container" id="chatContainer">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-content">
+                        <h1>DMXS AI</h1>
+                        <p>Asisten AI 100% Gratis - Tanpa Login, Tanpa Batas!</p>
+                        
+                        <div class="feature-cards">
+                            <div class="feature-card">
+                                <div class="feature-icon">💬</div>
+                                <h3>Chat AI</h3>
+                                <p>Powered by Hugging Face</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">🔊</div>
+                                <h3>Text to Speech</h3>
+                                <p>Suara natural</p>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">🎨</div>
+                                <h3>Image Gen</h3>
+                                <p>Buat gambar gratis</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="messages" id="messages"></div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea id="userInput" placeholder="Ketik pesan..." rows="1" onkeydown="handleKeyDown(event)"></textarea>
+                    <button class="send-btn" onclick="sendMessage()" id="sendBtn">➤</button>
+                </div>
+                <p class="disclaimer">
+                    <button onclick="generateImage()" style="background: none; border: none; color: #6366f1; cursor: pointer; text-decoration: underline;">🎨 Generate Gambar</button> | 
+                    <button onclick="speakLast()" style="background: none; border: none; color: #6366f1; cursor: pointer; text-decoration: underline;">🔊 Baca Pesan Terakhir</button>
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <h3>Generate Gambar Gratis</h3>
+            <input type="text" id="imagePrompt" placeholder="Deskripsi gambar...">
+            <button onclick="generateImageFree()" class="btn-primary">Generate</button>
+            <div id="imageResult"></div>
+            <button onclick="closeImageModal()" class="close-btn">Tutup</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
